@@ -13,12 +13,12 @@ class PoseSubscriberNode(Node):
         super().__init__("serialSender")
         self.pose_subscriber_ = self.create_subscription(Pose, "/turtle1/pose", self.pose_callback, 1)
 
-    def pose_callback(self, msg:Pose):
+    def pose_callback(self, msg: Pose):
         th = msg.theta + math.pi
         angle = int((th / (2 * math.pi)) * 180)
-        self.get_logger().info("Servo angle set to: "+str(angle))
-        time.sleep(0.8)
-        ser.write(angle.to_bytes(4,byteorder='big'))
+        if 0 <= angle <= 180:
+            self.get_logger().info("Servo angle set to: " + str(angle))
+            ser.write((str(angle) + "\n").encode())  # Send as string with
         
 def main(args=None):
     rclpy.init(args=args)
